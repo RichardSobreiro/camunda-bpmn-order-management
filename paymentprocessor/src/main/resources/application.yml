@@ -1,0 +1,6 @@
+server.port: 8081
+spring.main.web-application-type: none
+aws:
+   request-queue: dev-saeast-sqs-payments-requests.fifo
+   response-queue: dev-saeast-sqs-payments-responses.fifo 
+   
