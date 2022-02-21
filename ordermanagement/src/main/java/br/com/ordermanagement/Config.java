@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+//import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@EnableJdbcRepositories
+//@EnableJdbcRepositories
 @EnableConfigurationProperties
 public class Config {
 	public static String requestsTopicTopicArn;

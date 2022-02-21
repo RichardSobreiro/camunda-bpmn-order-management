@@ -3,10 +3,14 @@ aws:
    requests-topic: arn:aws:sns:sa-east-1:991345343226:requests-topic.fifo
 
 spring.datasource:
-  url: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+   url: jdbc:mysql://localhost:3306/camundadb
+   username: root
+   password: root
+   driver-class-name: com.mysql.jdbc.Driver
+  #url: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 #shareable h2 database: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
-  username: sa
-  password: sa
+  #username: sa
+  #password: sa
 spring.h2.console.enabled: true
 
 camunda.bpm:

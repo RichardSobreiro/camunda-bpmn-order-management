@@ -48,13 +48,27 @@
   </dependencyManagement>
 
   <dependencies>
-  	<!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-jdbc -->
+  	<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
 	<dependency>
-	    <groupId>org.springframework.data</groupId>
-	    <artifactId>spring-data-jdbc</artifactId>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-data-jpa</artifactId>
+	    <version>2.6.3</version>
 	</dependency>
-	  	
-  
+
+	<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
+	<dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-jdbc</artifactId>
+	    <version>2.6.3</version>
+	</dependency>
+		
+	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+	<dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.28</version>
+	</dependency>
+	
   	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 	<dependency>
 	    <groupId>org.projectlombok</groupId>
@@ -97,16 +111,16 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
+    <!-- <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-    </dependency>
+    </dependency> -->
 
     <!-- required to use H2 as a file based database  (otherwise it's in-memory) -->
-    <dependency>
+    <!-- <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
-    </dependency>
+    </dependency> -->
 
     <!-- Required to use Spin dataformat support -->
     <dependency>

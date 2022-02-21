@@ -1,6 +1,13 @@
 # camunda-bpmn-order-management
 An order management system using camunda and it's bpmn modeler to orchestrate microservices.
 
+## Run mysql database
+
+```sq
+sudo docker pull mysql/mysql-server:latest
+
+```
+
 ## Run the payment external task locally
 
 ```sq

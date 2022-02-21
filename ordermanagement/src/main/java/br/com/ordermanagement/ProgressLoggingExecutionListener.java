@@ -43,7 +43,7 @@ public class ProgressLoggingExecutionListener implements ExecutionListener {
 	public void notify(DelegateExecution execution) throws Exception {
 		LOGGER.info("EXTERNAL TASK TOPIC RUNNING: " + topicName);
 		Context.getCommandContext().getTransactionContext()
-			.addTransactionListener(TransactionState.COMMITTING, commandContext ->{
+			.addTransactionListener(TransactionState.COMMITTED, commandContext ->{
 				
 				ExternalTask externalTask = execution.getProcessEngineServices()
 					.getExternalTaskService()

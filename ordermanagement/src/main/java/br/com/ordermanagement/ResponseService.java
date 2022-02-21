@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.ordermanagement.model.MessageType;
 import br.com.ordermanagement.model.WorkflowMessage;
-import br.com.ordermanagement.repository.ExternalTaskRepository;
+//import br.com.ordermanagement.repository.ExternalTaskRepository;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
