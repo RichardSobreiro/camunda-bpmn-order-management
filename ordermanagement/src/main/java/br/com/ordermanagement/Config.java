@@ -1,8 +1,12 @@
 package br.com.ordermanagement;
 
+import org.camunda.bpm.engine.impl.cfg.ProcessEnginePlugin;
+import org.camunda.bpm.spring.boot.starter.configuration.Ordering;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -21,6 +25,18 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 @EnableJdbcRepositories
 @EnableConfigurationProperties
 public class Config {
+	public static String requestsTopicTopicArn;
+	
+	public Config(@Value("${aws.requests-topic:none}") String requestsTopicTopicArn) {
+		Config.requestsTopicTopicArn = requestsTopicTopicArn;
+	}
+	
+	@Bean
+	@Order(Ordering.DEFAULT_ORDER + 1)
+	public static ProcessEnginePlugin myCustomConfiguration() {
+		return new ProgressLoggingSupportParseListenerPlugin(Config.requestsTopicTopicArn);
+	}
+	
 	@Bean
     public TaskExecutor responseQueueExecutor() {
         return createTaskExecutor(5, "response-");

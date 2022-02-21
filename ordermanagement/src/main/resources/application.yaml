@@ -1,6 +1,6 @@
 aws:
-   response-queue: https://sqs.sa-east-1.amazonaws.com/991345343226/dev-saeast-sqs-payments-responses.fifo
-   task-topic: arn:aws:sns:sa-east-1:991345343226:dev-saeast-sns-payments-requests.fifo
+   response-queue: https://sqs.sa-east-1.amazonaws.com/991345343226/response-queue.fifo
+   requests-topic: arn:aws:sns:sa-east-1:991345343226:requests-topic.fifo
 
 spring.datasource:
   url: jdbc:h2:./camunda-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -8,6 +8,7 @@ spring.datasource:
   username: sa
   password: sa
 spring.h2.console.enabled: true
+
 camunda.bpm:
   admin-user:
     id: demo

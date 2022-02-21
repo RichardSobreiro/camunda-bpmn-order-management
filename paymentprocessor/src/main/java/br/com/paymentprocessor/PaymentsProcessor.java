@@ -36,7 +36,7 @@ public class PaymentsProcessor {
 	
 	public PaymentsProcessor(ObjectMapper objectMapper,
 			@Value("${aws.request-queue:none}") String requestQueueName,
-			@Value("${aws.request-queue:none}") String responseQueueName) {
+			@Value("${aws.response-queue:none}") String responseQueueName) {
 		this.objectMapper = objectMapper;
 		this.REQUEST_QUEUE_NAME = requestQueueName;
 		this.RESPONSE_QUEUE_NAME = responseQueueName;
@@ -58,6 +58,7 @@ public class PaymentsProcessor {
 			// Receive messages from the queue
 			ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
                 .queueUrl(requestQueueUrl)
+                .messageAttributeNames("All")
                 .build();
             List<Message> messages = sqsClient.receiveMessage(receiveRequest).messages();
             
@@ -87,13 +88,12 @@ public class PaymentsProcessor {
                     .build();
             String responseQueueUrl = sqsClient.getQueueUrl(getResponseQueue).queueUrl();
             
-            boolean success = (boolean) requestMessage.getVariables().get(Constants.ATTRIBUTE_ROUTING_SUCCESS);
+            boolean success = true;
             String topic = (String) requestMessage.getVariables().get(Constants.ATTRIBUTE_ROUTING_KEY);
-            String externalTaskId = (String) requestMessage.getVariables().get(Constants.ATTRIBUTE_EXTERNAL_TASK_ID);
             
             Map<String, MessageAttributeValue> attributesResponseMessage = new HashMap<>();;
             attributesResponseMessage.put(Constants.ATTRIBUTE_EXTERNAL_TASK_ID, MessageAttributeValue.builder()
-            		.stringValue(externalTaskId)
+            		.stringValue(requestMessage.getExternalTaskId())
                     .dataType("String")
                     .build());
             attributesResponseMessage.put(Constants.ATTRIBUTE_NAME_TYPE, MessageAttributeValue.builder()

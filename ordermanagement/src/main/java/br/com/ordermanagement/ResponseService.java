@@ -26,7 +26,6 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 @Service
 public class ResponseService {
 	private final ExternalTaskService externalTaskService;
-    private final ExternalTaskRepository externalTaskRepository;
     private final ExternalTaskWorkerService externalTaskWorkerService;
     private final ObjectMapper objectMapper;
     private final SqsClient sqsClient;
@@ -35,13 +34,11 @@ public class ResponseService {
     private final Logger LOGGER = Logger.getLogger(LoggerDelegate.class.getName());
 
     public ResponseService(ExternalTaskService externalTaskService,
-                           ExternalTaskRepository externalTaskRepository,
                            ExternalTaskWorkerService externalTaskWorkerService,
                            ObjectMapper objectMapper,
                            SqsClient sqsClient,
                            @Value("${aws.response-queue:none}") String responseQueueUrl) {
         this.externalTaskService = externalTaskService;
-        this.externalTaskRepository = externalTaskRepository;
         this.externalTaskWorkerService = externalTaskWorkerService;
         this.objectMapper = objectMapper;
         this.sqsClient = sqsClient;
@@ -54,7 +51,7 @@ public class ResponseService {
     @Async("responseQueueExecutor")
     public void pollResponseQueue() {
         try {
-        	LOGGER.info("Long-polling queue: {" + responseQueueUrl + "}");
+        	//LOGGER.info("Long-polling queue: {" + responseQueueUrl + "}");
             ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder()
                     .queueUrl(responseQueueUrl)
                     .maxNumberOfMessages(10)
@@ -95,7 +92,7 @@ public class ResponseService {
         LOGGER.info("Routing-key: {" + routingKey + "}");
         LOGGER.info("Task id: {" + externalTaskId + "}");
         
-        if (externalTaskId != null) {
+        if (workflowMessage.externalTaskId != null) {
             if (type == MessageType.EXTERNAL_TASK) {
                 if (success) {
                     // Complete task

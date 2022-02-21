@@ -16,7 +16,10 @@ import java.util.Map;
 @AllArgsConstructor
 @ToString
 public class WorkflowMessage {
-	private String businessKey;
-    private String workflow;
-    private Map<String, Object> variables;
+	public String businessKey;
+	public String workflow;
+    public Map<String, Object> variables;
+    public String externalTaskId;
+    public String externalTaskName;
+    public String responseQueueUrl;
 }

@@ -28,8 +28,8 @@ public class ExternalTaskWorkerService {
 	private final ExternalTaskService externalTaskService;
     private final SnsClient snsClient;
     private final ObjectMapper objectMapper;
-    private String externalTaskTopicArn;
-    private final String responseQueueUrl;
+    private final String externalTaskTopicArn;
+    private final String paymentsResponseQueueUrl;
     
     private final Logger LOGGER = Logger.getLogger(LoggerDelegate.class.getName());
     
@@ -37,15 +37,12 @@ public class ExternalTaskWorkerService {
             ObjectMapper objectMapper,
             SnsClient snsClient,
             @Value("${aws.task-topic:none}") String externalTaskTopicArn,
-            @Value("${aws.response-queue:none}") String responseQueueUrl) {
+            @Value("${aws.payments-response-queue:none}") String paymentsResponseQueueUrl) {
 		this.externalTaskService = externalTaskService;
 		this.objectMapper = objectMapper;
 		this.snsClient = snsClient;
 		this.externalTaskTopicArn = externalTaskTopicArn;
-		this.responseQueueUrl = responseQueueUrl;
-		
-		LOGGER.info("Topic: {" + externalTaskTopicArn + "}");
-		LOGGER.info("Queue: {" + responseQueueUrl + "}");
+		this.paymentsResponseQueueUrl = paymentsResponseQueueUrl;
 	}
     
     @Scheduled(fixedRate = Constants.TASK_POLL_MILLIS)
@@ -72,11 +69,12 @@ public class ExternalTaskWorkerService {
         List<LockedExternalTask> externalTasks = externalTaskQueryBuilder.execute();
         for (LockedExternalTask lockedExternalTask : externalTasks) {
             try {
-                sendMessage(lockedExternalTask.getTopicName(),
-                        lockedExternalTask.getBusinessKey(),
-                        lockedExternalTask.getProcessDefinitionKey(),
-                        lockedExternalTask.getId(),
-                        lockedExternalTask.getVariables());
+				/* COMMENTED: PLUGIN SNS-SQS COMMUNICATION WITH EXTERNAL TASKS
+				 * sendMessage(lockedExternalTask.getTopicName(),
+				 * lockedExternalTask.getBusinessKey(),
+				 * lockedExternalTask.getProcessDefinitionKey(), lockedExternalTask.getId(),
+				 * lockedExternalTask.getVariables());
+				 */
             } catch (Exception e) {
             	LOGGER.log(Level.SEVERE, "Error sending SQS message", e);
             }
@@ -87,33 +85,27 @@ public class ExternalTaskWorkerService {
     		String externalTaskId,
     		Map<String, Object> variables) throws Exception {
     	LOGGER.info("Sending SNS message for topic: {" + topic + "}");
+    	
         Map<String, MessageAttributeValue> messageAttributes = new HashMap<>();
-        messageAttributes.put(Constants.ATTRIBUTE_EXTERNAL_TASK_ID, MessageAttributeValue.builder()
-        		.stringValue(externalTaskId)
-                .dataType("String")
-                .build());
-        messageAttributes.put(Constants.ATTRIBUTE_NAME_TYPE, MessageAttributeValue.builder()
-        		.stringValue(br.com.ordermanagement.model.MessageType.EXTERNAL_TASK.name())
-                .dataType("String")
-                .build());
         messageAttributes.put(Constants.ATTRIBUTE_ROUTING_KEY, MessageAttributeValue.builder()
                 .stringValue(topic)
                 .dataType("String")
                 .build());
-        messageAttributes.put(Constants.ATTRIBUTE_REPLY_TO, MessageAttributeValue.builder()
-                .stringValue(responseQueueUrl)
-                .dataType("String")
-                .build());
+        
         WorkflowMessage workflowMessage = WorkflowMessage.builder()
-                .businessKey(businessKey)
-                .workflow(workflow)
-                .variables(variables)
-                .build();
+            .businessKey(businessKey)
+            .workflow(workflow)
+            .externalTaskId(externalTaskId)
+            .externalTaskName("")
+            .responseQueueUrl(paymentsResponseQueueUrl)
+            .variables(variables)
+            .build();
+        
         snsClient.publish(PublishRequest.builder()
-                .topicArn(externalTaskTopicArn)
-                .message(objectMapper.writeValueAsString(workflowMessage))
-                .messageAttributes(messageAttributes)
-                .messageGroupId(topic)
-                .build());
+            .topicArn(externalTaskTopicArn)
+            .message(objectMapper.writeValueAsString(workflowMessage))
+            .messageAttributes(messageAttributes)
+            .messageGroupId(topic)
+            .build());
     }
 }
